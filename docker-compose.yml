@@ -142,7 +142,8 @@ services:
      command: -c synchronous_commit=OFF
      container_name: pg_prometheus
      environment:
-        POSTGRES_PASSWORD: "password"
+        POSTGRES_PASSWORD: "zxcvbn32145"
+        POSTGRES_DB: "prom321"
      ports:
        - "5432:5432"
      healthcheck:
@@ -161,6 +162,6 @@ services:
      depends_on:
        pg_prometheus:
          condition: service_healthy
-     command: "-pg.host=pg_prometheus -pg.password=password -pg.prometheus-log-samples"
+     command: "-pg.host=pg_prometheus -pg.password=zxcvbn32145 -pg.database=prom321 -pg.prometheus-log-samples"
      networks:
       - monitor-net
