@@ -136,3 +136,31 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+
+  pg_prometheus:
+     image: timescale/pg_prometheus
+     command: -c synchronous_commit=OFF
+     container_name: pg_prometheus
+     environment:
+        POSTGRES_PASSWORD: "password"
+     ports:
+       - "5432:5432"
+     healthcheck:
+       test: ["CMD-SHELL", "pg_isready -U postgres"]
+       interval: 1s
+       timeout: 5s
+       retries: 10
+     networks:
+      - monitor-net
+
+  prometheus_postgresql_adapter:
+     image: timescale/prometheus-postgresql-adapter
+     container_name: prometheus_postgresql_adapter
+     ports:
+       - "9201:9201"
+     depends_on:
+       pg_prometheus:
+         condition: service_healthy
+     command: "-pg.host=pg_prometheus -pg.password=password -pg.prometheus-log-samples"
+     networks:
+      - monitor-net
